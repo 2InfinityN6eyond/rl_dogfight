@@ -344,12 +344,16 @@ def update_main_phase(dts):
             acc = Main.user_aircraft.get_linear_acceleration()
             camera_noise_level = max(0, Main.user_aircraft.get_linear_speed() * 3.6 / 2500 * 0.1 + pow(min(1, abs(acc / 7)), 2) * 1)
             if Main.user_aircraft.post_combustion:
-                camera_noise_level += 0.1
+                pass
+                #camera_noise_level += 0.1
 
         if Main.player_view_mode == SmartCamera.TYPE_FIX:
             cam = Main.camera_cokpit
         else:
             cam = Main.camera
+
+        cam = Main.camera_cokpit
+
 
         if Main.keyboard.Pressed(hg.K_Y):
             flag = Main.user_aircraft.get_custom_physics_mode()
@@ -379,6 +383,8 @@ def update_main_phase(dts):
     elif mission.end_test(Main):
         init_end_phase()
         return update_end_phase
+
+    print("update_main_phase")
 
     return update_main_phase
 

@@ -1296,7 +1296,8 @@ class Aircraft(Destroyable_Machine):
                               "DEACTIVATE_POST_COMBUSTION": self.deactivate_post_combustion
                               })
 
-        self.add_device(AircraftUserControlDevice("UserControlDevice", self, "scripts/aircraft_user_inputs_mapping.json"))
+        self.add_device(AircraftUserControlDevice(
+            "UserControlDevice", self, "scripts/aircraft_user_inputs_mapping.json"))
         self.add_device(AircraftAutopilotControlDevice("AutopilotControlDevice", self, "scripts/aircraft_autopilot_inputs_mapping.json"))
         self.add_device(AircraftIAControlDevice("IAControlDevice", self, "scripts/aircraft_ia_inputs_mapping.json"))
         self.add_device(TargettingDevice("TargettingDevice", self, True))
@@ -1335,6 +1336,8 @@ class Aircraft(Destroyable_Machine):
 
         # Gun machine:
         n = len(self.machine_gun_slots)
+        print("num gun slots :")
+        print(n)
         for i in range(n):
             self.add_device(MachineGun(("MachineGunDevice_%02d") % i, self, self.machine_gun_slots[i], scene, scene_physics, 1000 / n))
             #self.gun_machines.append(MachineGun(self.name + ".gun." + str(i + 1), self.scene, self.scene_physics, 1000))
@@ -1374,7 +1377,7 @@ class Aircraft(Destroyable_Machine):
         self.flag_going_to_takeoff_position = False
         self.takeoff_position = None
 
-        self.flag_easy_steering = True
+        self.flag_easy_steering = False
         self.flag_easy_steering_mem = True  # Used in IA on/off switching
         self.thrust_level_inertia = 1
         self.thrust_level_dest = 0

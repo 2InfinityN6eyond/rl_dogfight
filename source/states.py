@@ -384,8 +384,6 @@ def update_main_phase(dts):
         init_end_phase()
         return update_end_phase
 
-    print("update_main_phase")
-
     return update_main_phase
 
 

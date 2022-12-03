@@ -582,15 +582,26 @@ class Missions:
 		cls.validation_state = tools.create_stereo_sound_state(hg.SR_Once)
 		cls.validation_state.volume = 0.5
 
-		cls.missions.append(Mission("Network mode", ["Eurofighter"], ["Rafale"], 1, 1, Missions.network_mode_setup, Missions.network_mode_end_test, Missions.network_mode_end_phase_update))
+		# title, ennemies:list, allies:list, num_carriers_ennemies:int, num_carriers_allies:int,
+		# setup_players, end_test, end_phase_update
 
-		cls.missions.append(Mission("Training with Rafale", [], ["Rafale"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission("Training with Eurofighter", [], ["Eurofighter"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission("Training with TFX", [], ["TFX"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		cls.missions.append(Mission(
+			"Network mode", ["Eurofighter"], ["Rafale"], 1, 1,
+			Missions.network_mode_setup, Missions.network_mode_end_test, Missions.network_mode_end_phase_update))
+
+		cls.missions.append(Mission(
+			"Training with Rafale", [], ["Rafale"], 0, 1,
+			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		cls.missions.append(Mission(
+			"Training with Eurofighter", [], ["Eurofighter"], 0, 1,
+			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		cls.missions.append(Mission(
+			"Training with TFX", [], ["TFX"], 0, 1,
+			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 		cls.missions.append(Mission("Training with F16", [], ["F16"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 		cls.missions.append(Mission("Training with Miuss", [], ["Miuss"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		#cls.missions.append(Mission("Training with F14", [], ["F14"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		#cls.missions.append(Mission("Training with F14 2", [], ["F14_2"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		cls.missions.append(Mission("Training with F14", [], ["F14"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		cls.missions.append(Mission("Training with F14 2", [], ["F14_2"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 
 		cls.missions.append(Mission("One on one", ["Rafale"], ["Eurofighter"], 1, 1, Missions.mission_setup_players, Missions.mission_one_against_x_end_test, Missions.mission_one_against_x_end_phase_update))
 		cls.missions.append(Mission("Fight against 2 ennemies", ["Rafale"] * 2, ["Eurofighter"], 1, 1, Missions.mission_setup_players, Missions.mission_one_against_x_end_test, Missions.mission_one_against_x_end_phase_update))

@@ -571,7 +571,12 @@ class ControlDevice(MachineDevice):
     generic_controller = None
 
     @classmethod
-    def init(cls, keyboard, mouse, gamepad, generic_controller):
+    def init(cls,
+        keyboard : hg.Keyboard,
+        mouse : hg.Mouse,
+        gamepad : hg.GamePad,
+        generic_controller : hg.Joystick
+    ):
         cls.keyboard = keyboard
         cls.mouse = mouse
         cls.gamepad = gamepad

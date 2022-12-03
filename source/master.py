@@ -817,32 +817,32 @@ class Main:
     @classmethod
     def control_views(cls, keyboard):
         quit_sv = False
-        if keyboard.Down(hg.K_Numpad2):
+        if keyboard.Down(hg.K_Numpad2) or keyboard.Down(hg.K_2):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_TRACKING
             cls.update_main_view_from_carousel()
             cls.set_track_view("back")
-        elif keyboard.Down(hg.K_Numpad8):
+        elif keyboard.Down(hg.K_Numpad8) or keyboard.Down(hg.K_8):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_TRACKING
             cls.update_main_view_from_carousel()
             cls.set_track_view("front")
-        elif keyboard.Down(hg.K_Numpad4):
+        elif keyboard.Down(hg.K_Numpad4) or keyboard.Down(hg.K_4):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_TRACKING
             cls.update_main_view_from_carousel()
             cls.set_track_view("left")
-        elif keyboard.Down(hg.K_Numpad6):
+        elif keyboard.Down(hg.K_Numpad6) or keyboard.Down(hg.K_6):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_TRACKING
             cls.update_main_view_from_carousel()
             cls.set_track_view("right")
 
-        elif keyboard.Pressed(hg.K_Numpad5):
+        elif keyboard.Pressed(hg.K_Numpad5) or keyboard.Down(hg.K_5):
             tgt = cls.get_player_from_caroursel_id()
             if tgt is not None:
                 cls.deactivate_cockpit_view()
@@ -852,7 +852,7 @@ class Main:
                     cls.smart_camera.setup(SmartCamera.TYPE_SATELLITE, cls.satellite_camera, tgt)
                     cls.scene.SetCurrentCamera(cls.satellite_camera)
 
-        elif keyboard.Pressed(hg.K_Numpad1):
+        elif keyboard.Pressed(hg.K_Numpad1) or keyboard.Down(hg.K_1):
             if not cls.flag_network_mode:
                 if cls.user_aircraft is not None:
                     uctrl = cls.user_aircraft.get_device("UserControlDevice")
@@ -890,18 +890,18 @@ class Main:
                 cls.user_aircraft = None
             cls.update_main_view_from_carousel()
 
-        elif keyboard.Pressed(hg.K_Numpad3):
+        elif keyboard.Pressed(hg.K_Numpad3) or keyboard.Down(hg.K_3):
             quit_sv = True
             cls.activate_cockpit_view()
             cls.update_main_view_from_carousel()
 
-        elif keyboard.Pressed(hg.K_Numpad9):
+        elif keyboard.Pressed(hg.K_Numpad9) or keyboard.Down(hg.K_9):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_FOLLOW
             cls.update_main_view_from_carousel()
 
-        elif keyboard.Pressed(hg.K_Numpad7):
+        elif keyboard.Pressed(hg.K_Numpad7) or keyboard.Down(hg.K_7):
             cls.deactivate_cockpit_view()
             quit_sv = True
             cls.player_view_mode = SmartCamera.TYPE_TACTICAL

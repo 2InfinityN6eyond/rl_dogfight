@@ -574,7 +574,7 @@ class ControlDevice(MachineDevice):
     def init(cls,
         keyboard : hg.Keyboard,
         mouse : hg.Mouse,
-        gamepad : hg.GamePad,
+        gamepad : hg.Gamepad,
         generic_controller : hg.Joystick
     ):
         cls.keyboard = keyboard

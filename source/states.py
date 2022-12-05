@@ -285,7 +285,6 @@ def init_main_phase():
 
 
 def update_main_phase(dts):
-
     Main.timestamp += 1
     if not Main.flag_renderless:
         Main.post_process.update_fading(dts)
@@ -352,8 +351,7 @@ def update_main_phase(dts):
         else:
             cam = Main.camera
 
-        cam = Main.camera_cokpit
-
+       
 
         if Main.keyboard.Pressed(hg.K_Y):
             flag = Main.user_aircraft.get_custom_physics_mode()
@@ -364,6 +362,8 @@ def update_main_phase(dts):
 
     if Main.satellite_view:
         cam = Main.satellite_camera
+
+
 
     Main.smart_camera.update(cam, dts, camera_noise_level)
 

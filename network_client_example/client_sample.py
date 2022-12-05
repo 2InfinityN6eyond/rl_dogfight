@@ -46,7 +46,6 @@ df.set_plane_thrust(plane_id, 1)
 df.set_client_update_mode(True)
 
 # Wait until plane thrust = 1
-
 while t < 1:
 	plane_state = df.get_plane_state(plane_id)
 	# Display text & vector - !!! Must be called before update_scene() !!!
@@ -57,7 +56,6 @@ while t < 1:
 	df.update_scene()
 	#print_fps()
 	t = plane_state["thrust_level"]
-
 
 # Activate the post-combustion (increases thrust power) 
 df.activate_post_combustion(plane_id)

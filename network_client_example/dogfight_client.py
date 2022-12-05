@@ -13,60 +13,67 @@ def disconnect():
 # Globals
 
 def disable_log():
-	socket_lib.send_message(str.encode(json.dumps({"command": "DISABLE_LOG", "args": {}})))
-
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "DISABLE_LOG", "args": {}})))
 
 def enable_log():
-	socket_lib.send_message(str.encode(json.dumps({"command": "ENABLE_LOG", "args": {}})))
-
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "ENABLE_LOG", "args": {}})))
 
 def get_running():
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_RUNNING", "args": {}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_RUNNING", "args": {}})))
 	return json.loads((socket_lib.get_answer()).decode())
 	
-
 def set_timestep(t):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_TIMESTEP", "args": {"timestep": t}})))
-
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_TIMESTEP", "args": {"timestep": t}})))
 
 def get_timestep():
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_TIMESTEP", "args": {}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_TIMESTEP", "args": {}})))
 	return json.loads((socket_lib.get_answer()).decode())
 
-
 def set_renderless_mode(flag: bool):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_RENDERLESS_MODE", "args": {"flag": flag}})))
-
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_RENDERLESS_MODE", "args": {"flag": flag}})))
 
 def set_client_update_mode(flag: bool):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_CLIENT_UPDATE_MODE", "args": {"flag": flag}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_CLIENT_UPDATE_MODE", "args": {"flag": flag}})))
 
 
 def set_display_radar_in_renderless_mode(flag: bool):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_DISPLAY_RADAR_IN_RENDERLESS_MODE", "args": {"flag": flag}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_DISPLAY_RADAR_IN_RENDERLESS_MODE", "args": {"flag": flag}})))
 
 
 def update_scene():
-	socket_lib.send_message(str.encode(json.dumps({"command": "UPDATE_SCENE", "args": {}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "UPDATE_SCENE", "args": {}})))
 
 
 def display_vector(position, direction, label, label_offset2D, color, label_size):
-	socket_lib.send_message(str.encode(json.dumps({"command": "DISPLAY_VECTOR", "args": {"position": position, "direction": direction, "label": label, "label_offset2D": label_offset2D, "color": color, "label_size": label_size}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "DISPLAY_VECTOR", "args": {"position": position, "direction": direction, "label": label, "label_offset2D": label_offset2D, "color": color, "label_size": label_size}})))
 
 
 def display_2DText(position, text, size, color):
-	socket_lib.send_message(str.encode(json.dumps({"command": "DISPLAY_2DTEXT", "args": {"position": position, "text": text, "size": size, "color": color}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "DISPLAY_2DTEXT", "args": {"position": position, "text": text, "size": size, "color": color}})))
 
 
 # Machines
 
 def get_mobile_parts_list(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_MOBILE_PARTS_LIST", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_MOBILE_PARTS_LIST", "args": {"machine_id": machine_id}})))
 	return json.loads((socket_lib.get_answer()).decode())
 
 
 def set_machine_custom_physics_mode(machine_id, flag: bool):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_MACHINE_CUSTOM_PHYSICS_MODE", "args": {"machine_id": machine_id, "flag": flag}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_MACHINE_CUSTOM_PHYSICS_MODE", "args": {"machine_id": machine_id, "flag": flag}})))
 
 
 def get_machine_custom_physics_mode(machine_id):
@@ -76,69 +83,83 @@ def get_machine_custom_physics_mode(machine_id):
 
 
 def update_machine_kinetics(machine_id, matrix_3_4: list, speed_vector: list):
-	socket_lib.send_message(str.encode(json.dumps({"command": "UPDATE_MACHINE_KINETICS", "args": {"machine_id": machine_id, "matrix": matrix_3_4, "v_move": speed_vector}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "UPDATE_MACHINE_KINETICS", "args": {"machine_id": machine_id, "matrix": matrix_3_4, "v_move": speed_vector}})))
 
 
 def get_targets_list(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_TARGETS_LIST", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_TARGETS_LIST", "args": {"machine_id": machine_id}})))
 	state = json.loads((socket_lib.get_answer()).decode())
 	return state
 
 
 def get_target_idx(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_TARGET_IDX", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_TARGET_IDX", "args": {"machine_id": machine_id}})))
 	state = json.loads((socket_lib.get_answer()).decode())
 	return state
 
 
 def set_target_id(machine_id, target_id):
 	# target_id: index in targets list. 0 = no target
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_TARGET_ID", "args": {"machine_id": machine_id, "target_id": target_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_TARGET_ID", "args": {"machine_id": machine_id, "target_id": target_id}})))
 
 
 def get_health(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_HEALTH", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_HEALTH", "args": {"machine_id": machine_id}})))
 	state = json.loads((socket_lib.get_answer()).decode())
 	return state
 
 
 def set_health(machine_id, level):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_HEALTH", "args": {"machine_id": machine_id, "health_level": level}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "SET_HEALTH", "args": {"machine_id": machine_id, "health_level": level}})))
 
 
 def get_machine_missiles_list(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_MACHINE_MISSILES_LIST", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_MACHINE_MISSILES_LIST", "args": {"machine_id": machine_id}})))
 	return json.loads((socket_lib.get_answer()).decode())
 
 
 def get_missiles_device_slots_state(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "GET_MISSILESDEVICE_SLOTS_STATE", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "GET_MISSILESDEVICE_SLOTS_STATE", "args": {"machine_id": machine_id}})))
 	state = json.loads((socket_lib.get_answer()).decode())
 	return state
 
 
 def fire_missile(machine_id, slot_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "FIRE_MISSILE", "args": {"machine_id": machine_id, "slot_id": slot_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "FIRE_MISSILE", "args": {"machine_id": machine_id, "slot_id": slot_id}})))
 
 
 def rearm_machine(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "REARM_MACHINE", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "REARM_MACHINE", "args": {"machine_id": machine_id}})))
 
 
 def reset_machine(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "RESET_MACHINE", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "RESET_MACHINE", "args": {"machine_id": machine_id}})))
 
 
 def reset_machine_matrix(machine_id, x, y, z, rx, ry, rz):
-	socket_lib.send_message(str.encode(json.dumps({"command": "RESET_MACHINE_MATRIX", "args": {"machine_id": machine_id, "position": [x, y, z], "rotation": [rx, ry, rz]}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "RESET_MACHINE_MATRIX", "args": {"machine_id": machine_id, "position": [x, y, z], "rotation": [rx, ry, rz]}})))
 
 
 def activate_autopilot(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "ACTIVATE_AUTOPILOT", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "ACTIVATE_AUTOPILOT", "args": {"machine_id": machine_id}})))
 
 
 def deactivate_autopilot(machine_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "DEACTIVATE_AUTOPILOT", "args": {"machine_id": machine_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "DEACTIVATE_AUTOPILOT", "args": {"machine_id": machine_id}})))
 
 
 def activate_IA(machine_id):
@@ -205,7 +226,12 @@ def deactivate_user_control(machine_id):
 	socket_lib.send_message(str.encode(json.dumps({"command": "DEACTIVATE_USER_CONTROL", "args": {"machine_id": machine_id}})))
 
 def compute_next_timestep_physics(machine_id, timestep):
-	socket_lib.send_message(str.encode(json.dumps({"command": "COMPUTE_NEXT_TIMESTEP_PHYSICS", "args": {"machine_id": machine_id, "timestep": timestep}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{
+			"command": "COMPUTE_NEXT_TIMESTEP_PHYSICS", 
+			"args": {"machine_id": machine_id, "timestep": timestep}
+		}
+	)))
 	state = json.loads((socket_lib.get_answer()).decode())
 	return state
 
@@ -261,7 +287,13 @@ def deactivate_post_combustion(plane_id):
 
 
 def set_plane_pitch(plane_id, level):
-	socket_lib.send_message(str.encode(json.dumps({"command": "SET_PLANE_PITCH", "args": {"plane_id": plane_id, "pitch_level": level}})))
+	socket_lib.send_message(
+		str.encode(json.dumps(
+			{
+				"command": "SET_PLANE_PITCH",
+				"args": {
+					"plane_id": plane_id,
+					"pitch_level": level}})))
 
 
 def set_plane_roll(plane_id, level):

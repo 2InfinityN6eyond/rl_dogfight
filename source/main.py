@@ -146,7 +146,11 @@ while not Main.flag_exit:
     
         Main.update_inputs()
         
-        if (not Main.flag_client_update_mode) or ((not Main.flag_renderless) and Main.flag_client_ask_update_scene):
+        if (
+            not Main.flag_client_update_mode
+            ) or (
+                (not Main.flag_renderless) and Main.flag_client_ask_update_scene
+            ):
             Main.update()
         else:
             time.sleep(1 / 120)

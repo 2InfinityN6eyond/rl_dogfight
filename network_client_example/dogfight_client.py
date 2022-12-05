@@ -132,6 +132,19 @@ def get_missiles_device_slots_state(machine_id):
 	return state
 
 
+
+
+def fire_machine_gun(machine_id):
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "FIRE_MACHINE_GUN", "args": {"machine_id": machine_id}})))
+
+def cease_machine_gun(machine_id):
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "CEASE_MACHINE_GUN", "args": {"machine_id": machine_id}})))
+
+
+
+
 def fire_missile(machine_id, slot_id):
 	socket_lib.send_message(str.encode(json.dumps(
 		{"command": "FIRE_MISSILE", "args": {"machine_id": machine_id, "slot_id": slot_id}})))

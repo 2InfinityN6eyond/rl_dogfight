@@ -283,7 +283,6 @@ def init_main_phase():
     Main.flag_running = True
     return update_main_phase
 
-
 def update_main_phase(dts):
     Main.timestamp += 1
     if not Main.flag_renderless:

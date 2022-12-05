@@ -195,16 +195,20 @@ class GameClient :
         df.set_plane_roll(self.planes[self.plane_idx],level = roll)
         df.set_plane_yaw(self.planes[self.plane_idx],level=yaw)
 
-        #deccellerate = controller_state["buttons"][XboxPad.button_name_idx_map["lb"]].value
-        #accellerate  = controller_state["buttons"][XboxPad.button_name_idx_map["rb"]].value
+        #if controller_state["buttons"][XboxPad.button_name_idx_map["lb"]].value :
+        if controller_state["buttons"][XboxPad.button_name_idx_map["rb"]].value :
+            df.fire_machine_gun(self.planes[self.plane_idx])
+        if controller_state["buttons"][XboxPad.button_name_idx_map["rb"]].released :
+            df.cease_machine_gun(self.planes[self.plane_idx])
+        
         
         accellerate  = controller_state["hat_buttons"]["up"].value
         deccellerate = controller_state["hat_buttons"]["down"].value
         thrust_level = df.get_plane_thrust(self.planes[self.plane_idx])
         if deccellerate :
-            df.set_plane_thrust(self.planes[self.plane_idx], level = min(1, thrust_level["thrust_level"] - 0.1))
+            df.set_plane_thrust(self.planes[self.plane_idx], level = max(0, thrust_level["thrust_level"] - 0.01))
         if accellerate :
-            df.set_plane_thrust(self.planes[self.plane_idx], level = max(1, thrust_level["thrust_level"] + 0.1))
+            df.set_plane_thrust(self.planes[self.plane_idx], level = min(1, thrust_level["thrust_level"] + 0.01))
         
 
         if controller_state["hat_buttons"]["left"].value :
@@ -212,18 +216,19 @@ class GameClient :
         if controller_state["hat_buttons"]["right"].value :
             df.activate_post_combustion(self.planes[self.plane_idx])
         
-
         df.update_scene()
 
-        #state = df.get_plane_state(self.planes[self.plane_idx])
+        state = df.get_plane_state(self.planes[self.plane_idx])
         #print(state)
         
         if controller_state["buttons"][XboxPad.button_name_idx_map["x"]].pressed :
-            print()
             print("closing..")
-            print()
             self.close()
             sys.exit(0)
+
+        if state["wreck"] or state["crashed"] :
+            df.reset_machine(self.planes[self.plane_idx])
+        
 
     def close(self) :
         df.set_client_update_mode(False)

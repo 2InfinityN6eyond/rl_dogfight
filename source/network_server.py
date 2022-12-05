@@ -54,6 +54,10 @@ def init_server(main_):
 		"GET_MACHINE_GUN_STATE": get_machine_gun_state,
 		"ACTIVATE_MACHINE_GUN": activate_machine_gun,
 		"DEACTIVATE_MACHINE_GUN": deactivate_machine_gun,
+
+		"FIRE_MACHINE_GUN" : fire_machine_gun,
+		"CEASE_MACHINE_GUN" : cease_machine_gun,
+
 		"GET_MISSILESDEVICE_SLOTS_STATE": get_missiles_device_slots_state,
 		"FIRE_MISSILE": fire_missile,
 		"REARM_MACHINE": rearm_machine,
@@ -378,7 +382,7 @@ def fire_machine_gun(args) :
 			mgd.fire_machine_gun()
 
 def cease_machine_gun(args) :
-	machine = main.destroyable_items[args["machine_id"]]
+	machine = main.destroyables_items[args["machine_id"]]
 	n = machine.get_machinegun_count()
 	for i in range(n):
 		mgd = machine.get_device("MachineGunDevice_%02d" % i)

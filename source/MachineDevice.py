@@ -965,8 +965,6 @@ class AircraftUserControlDevice(ControlDevice):
 
     def update_cm_keyboard(self, dts):
         im = self.inputs_mapping["AircraftUserInputsMapping"]["Keyboard"]
-        print("keyboard updated")
-        print(im)
         for cmd, input_code in im.items():
             if cmd in self.commands and input_code != "":
                 self.commands[cmd](input_code)
@@ -1123,13 +1121,19 @@ class AircraftUserControlDevice(ControlDevice):
             self.machine.flag_easy_steering = not self.machine.flag_easy_steering
 
     def fire_machine_gun_kb(self, value):
+
         if ControlDevice.keyboard.Down(value):
+            print("fire_machine_gun")
             n = self.machine.get_machinegun_count()
+            print("num machinegun", n)
             for i in range(n):
                 mgd = self.machine.get_device("MachineGunDevice_%02d" % i)
                 if mgd is not None and not mgd.is_gun_activated():
                     mgd.fire_machine_gun()
+        
         elif ControlDevice.keyboard.Released(value):
+            print("cease machine gun")
+
             n = self.machine.get_machinegun_count()
             for i in range(n):
                 mgd = self.machine.get_device("MachineGunDevice_%02d" % i)

@@ -58,7 +58,7 @@
 			"ACTIVATE_IA": "K_I",
 			"ACTIVATE_AUTOPILOT": "K_A",
 			"SWITCH_EASY_STEERING": "K_E",
-			"FIRE_MACHINE_GUN": "K_Enter",
+			"FIRE_MACHINE_GUN": "K_Numpad0",
 			"FIRE_MISSILE": "K_F1",
 			"REARM": "K_F5"
 		},

@@ -12,7 +12,12 @@ from MachineDevice import *
 
 class Mission:
 
-	def __init__(self, title, ennemies:list, allies:list, num_carriers_ennemies:int, num_carriers_allies:int, setup_players, end_test, end_phase_update):
+	def __init__(
+		self, title,
+		ennemies:list, allies:list,
+		num_carriers_ennemies:int, num_carriers_allies:int,
+		setup_players, end_test, end_phase_update
+	):
 		self.title = title
 		self.ennemies = ennemies
 		self.allies = allies

@@ -20,10 +20,8 @@ flag_print_log = True
 
 commands_functions = []
 
-
 def get_network():
 	return socket_lib.HOST, dogfight_network_port
-
 
 def init_server(main_):
 	global server_log, commands_functions, main
@@ -370,6 +368,22 @@ def get_machine_gun_state(args):
 	else:
 		print("ERROR - Machine '" + args["machine_id"] + "' has no MachineGunDevice !")
 
+
+def fire_machine_gun(args) :
+	machine = main.destroyables_items[args["machine_id"]]
+	n = machine.get_machinegun_count()
+	for i in range(n):
+		mgd = machine.get_device("MachineGunDevice_%02d" % i)
+		if mgd is not None and not mgd.is_gun_activated():
+			mgd.fire_machine_gun()
+
+def cease_machine_gun(args) :
+	machine = main.destroyable_items[args["machine_id"]]
+	n = machine.get_machinegun_count()
+	for i in range(n):
+		mgd = machine.get_device("MachineGunDevice_%02d" % i)
+		if mgd is not None and mgd.is_gun_activated():
+			mgd.stop_machine_gun()
 
 def get_missiles_device_slots_state(args):
 	machine = main.destroyables_items[args["machine_id"]]

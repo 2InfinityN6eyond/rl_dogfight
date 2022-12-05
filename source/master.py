@@ -46,8 +46,7 @@ class Main:
     # Control devices
 
     control_mode = ControlDevice.CM_KEYBOARD
-    control_mode = ControlDevice.CM_GAMEPAD
-
+    
     # VR mode
     flag_vr = False
     vr_left_fb = None

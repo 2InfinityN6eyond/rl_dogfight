@@ -965,6 +965,8 @@ class AircraftUserControlDevice(ControlDevice):
 
     def update_cm_keyboard(self, dts):
         im = self.inputs_mapping["AircraftUserInputsMapping"]["Keyboard"]
+        print("keyboard updated")
+        print(im)
         for cmd, input_code in im.items():
             if cmd in self.commands and input_code != "":
                 self.commands[cmd](input_code)

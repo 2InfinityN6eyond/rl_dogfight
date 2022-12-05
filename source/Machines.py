@@ -1297,7 +1297,10 @@ class Aircraft(Destroyable_Machine):
                               })
 
         self.add_device(AircraftUserControlDevice(
-            "UserControlDevice", self, "scripts/aircraft_user_inputs_mapping.json"))
+            "UserControlDevice", self,
+            "scripts/aircraft_user_inputs_mapping.json",
+            control_mode="GamePad"
+        ))
         self.add_device(AircraftAutopilotControlDevice("AutopilotControlDevice", self, "scripts/aircraft_autopilot_inputs_mapping.json"))
         self.add_device(AircraftIAControlDevice("IAControlDevice", self, "scripts/aircraft_ia_inputs_mapping.json"))
         self.add_device(TargettingDevice("TargettingDevice", self, True))

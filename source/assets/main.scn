@@ -269,7 +269,7 @@
 				4294967295,
 				4294967295
 			],
-			"disabled": false,
+			"disabled": true,
 			"idx": 9,
 			"instance": 0,
 			"name": "island_clipped"

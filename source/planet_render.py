@@ -78,7 +78,7 @@ class PlanetRender:
 
 		# Terrain
 		self.terrain_scale = hg.Vec3(41480, 1000, 19587)
-		self.terrain_position = terrain_position + terrain_offset
+		self.terrain_position = terrain_position + terrain_offset + hg.Vec3(1000000, 0, 1000000)
 		self.terrain_intensity = 0.5
 		self.terrain_clamp = 0.01
 		self.terrain_coast_edges = hg.Vec2(0.1, 0.3)

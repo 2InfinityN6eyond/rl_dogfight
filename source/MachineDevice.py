@@ -6,6 +6,8 @@ from math import radians, degrees, pi, sqrt, exp, floor, acos, asin, sin, cos
 from random import uniform
 from Particles import *
 
+import debug_printer
+
 # =====================================================================================================
 #                                  Landing
 # =====================================================================================================
@@ -500,18 +502,25 @@ class MachineGun(MachineDevice):
                     p1 = pos_fb + bullet.v_move
 
                     #Collision using distance:
-                    """
+
                     for target in targets:
                         distance = hg.Len(target.get_parent_node().GetTransform().GetPos()-pos_fb)
+                        #print(distance, end = " ")
+                    
                         if distance < 20: #2 * hg.Len(bullet.v_move) * dts:
+                        
+                            print("hit", self.machine.name, "->", target.name)
+
                             target.hit(0.1)
                             bullet.v_move = target.v_move
+
                             self.strike(i)
-                            break
 
                     """
                     rc_len = hg.Len(p1 - pos_fb)
                     hit = self.scene_physics.RaycastFirstHit(self.scene, pos_fb, p1)
+                    print(self.machine.name, "hit :",hit)
+                    
                     if 0 < hit.t < rc_len:
                         v_impact = hit.P - pos_fb
                         if hg.Len(v_impact) < 2 * hg.Len(bullet.v_move) * dts:
@@ -523,7 +532,7 @@ class MachineGun(MachineDevice):
                                         bullet.v_move = target.v_move
                                         self.strike(i)
                                         break
-
+                    """
 
                 if len(self.bullets_feed_backs) > 0:
                     fb = self.bullets_feed_backs[i]
@@ -1772,15 +1781,35 @@ class AircraftIAControlDevice(ControlDevice):
                     if mgd is not None and mgd.is_gun_activated():
                         mgd.stop_machine_gun()
 
+                debug_printer.print_debug("----------------")
+                debug_printer.print_debug("targets")
+                debug_printer.print_debug(td.target_id, td.targets)
+                debug_printer.print_debug("----------------")
+
+
                 self.IA_flag_go_to_target = False
                 if aircraft.flag_landed:
                     if self.IA_liftoff_delay <= 0:
                         self.IA_liftoff_delay = 1
+
+                        debug_printer.print_debug("----------------")
+                        debug_printer.print_debug("landed")
+                        debug_printer.print_debug("----------------")
+
+
                     self.IA_command = AircraftIAControlDevice.IA_COM_LIFTOFF
                 else:
                     if td.target_id == 0:
+                        debug_printer.print_debug("----------------")
+                        debug_printer.print_debug("target_id is 0")
+                        debug_printer.print_debug("----------------")
+
                         self.IA_command = AircraftIAControlDevice.IA_COM_LANDING
                     else:
+                        debug_printer.print_debug("----------------")
+                        debug_printer.print_debug("fight mode")
+                        debug_printer.print_debug("----------------")
+
                         self.IA_command = AircraftIAControlDevice.IA_COM_FIGHT
                 ap_ctrl = aircraft.get_device("AutopilotControlDevice")
                 if ap_ctrl is not None:
@@ -1846,14 +1875,31 @@ class AircraftIAControlDevice(ControlDevice):
 
     def update_controlled_device(self, dts):
         aircraft = self.machine
+
+        self.IA_command = AircraftIAControlDevice.IA_COM_FIGHT
+        #debug_printer.print_debug(self.IA_command, end = " ")
+
         if not aircraft.wreck and not aircraft.flag_going_to_takeoff_position:
             if self.IA_command == AircraftIAControlDevice.IA_COM_IDLE:
+
+                #debug_printer.print_debug("idle")
+
                 self.update_IA_idle(aircraft)
             elif self.IA_command == AircraftIAControlDevice.IA_COM_LIFTOFF:
+                
+                #debug_printer.print_debug("lift")
+
+
                 self.update_IA_liftoff(aircraft, dts)
             elif self.IA_command == AircraftIAControlDevice.IA_COM_FIGHT:
+
+                #debug_printer.print_debug("fight")
+
                 self.update_IA_fight(aircraft, dts)
             elif self.IA_command == AircraftIAControlDevice.IA_COM_LANDING:
+
+                #debug_printer.print_debug("landing")
+
                 self.update_IA_landing(aircraft, dts)
 
     def update_IA_liftoff(self, aircraft, dts):
@@ -2002,6 +2048,7 @@ class AircraftIAControlDevice(ControlDevice):
                                         self.IA_command = AircraftIAControlDevice.IA_COM_LIFTOFF
 
     def update_IA_fight(self, aircraft, dts):
+
         autopilot = aircraft.devices["AutopilotControlDevice"]
         if autopilot is not None:
             if "Gear" in aircraft.devices and aircraft.devices["Gear"] is not None:
@@ -2024,6 +2071,9 @@ class AircraftIAControlDevice(ControlDevice):
                 aircraft.set_flaps_level(0)
                 alt = aircraft.get_altitude()
                 td = aircraft.get_device("TargettingDevice")
+                
+                #debug_printer.print_debug(td.targets)
+                td.target_id = 1
                 if td.target_id > 0:
                     if self.IA_flag_position_correction:
                         if aircraft.playfield_distance < aircraft.playfield_safe_distance / 2:
@@ -2059,12 +2109,15 @@ class AircraftIAControlDevice(ControlDevice):
                     md = aircraft.get_device("MissilesDevice")
 
                     if td.target_locked:
+                        pass # 강화학습을 위해 미사일 발사를 안함
+                        """
                         if md is not None:
                             if self.IA_fire_missile_cptr <= 0:
                                 md.fire_missile()
                                 self.IA_fire_missile_cptr = self.IA_fire_missiles_delay
                             else:
                                 self.IA_fire_missile_cptr -= dts
+                        """
 
                     if td.target_angle < self.IA_gun_angle and td.target_distance < self.IA_gun_distance_max:
                         n = aircraft.get_machinegun_count()
@@ -2087,12 +2140,16 @@ class AircraftIAControlDevice(ControlDevice):
                     else:
                         flag_missiles_ok = True
 
+                    """ # 뭐하는건진 모르겠는데 일단 끔
                     if not flag_missiles_ok or aircraft.get_num_bullets() == 200 or aircraft.health_level < 0.33:
                         self.IA_flag_landing_target_found = False
                         self.IA_command = AircraftIAControlDevice.IA_COM_LANDING
                         return
+                    """
+
 
                 else:
+                    debug_printer.print_debug("target id < 1. changing to landing mode..")
                     self.IA_flag_go_to_target = False
                     n = aircraft.get_machinegun_count()
                     for i in range(n):

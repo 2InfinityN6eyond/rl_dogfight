@@ -180,9 +180,9 @@ def server_update():
 			main.flag_client_connected = False
 			main.flag_client_update_mode = False
 			main.set_renderless_mode(False)
-			msg = "Socket closed"
-			server_log += msg
-			print(msg)
+			
+
+
 
 
 # Globals
@@ -768,8 +768,6 @@ def reset_gear(args):
 
 
 def set_plane_thrust(args):
-
-	print("setting thrust")
 	if flag_print_log:
 		print(args["plane_id"] + " " + str(args["thrust_level"]))
 	machine = main.destroyables_items[args["plane_id"]]

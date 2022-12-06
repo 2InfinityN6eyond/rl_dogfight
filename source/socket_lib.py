@@ -77,6 +77,7 @@ def send_message_quick(id, message):
 		send_message_thread = threading.Thread(target=check_send_message, args=(condition,))
 		send_message_thread.start()
 
+	
 
 def send_message_with_id(id, message):
 	# create header with id of the binding function and the length of the message

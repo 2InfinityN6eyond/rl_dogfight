@@ -152,7 +152,7 @@ while not Main.flag_exit:
                 (not Main.flag_renderless) and Main.flag_client_ask_update_scene
             ):
             Main.update()
-        else:
+        else: # renderless mode, flag_client_update_mode
             time.sleep(1 / 120)
             
         Main.update_window()

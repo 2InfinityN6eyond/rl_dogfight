@@ -175,7 +175,14 @@ class Missions:
 		for i, ac in enumerate(aircrafts):
 			# ac.reset_matrix(hg.Vec3(uniform(center.x-range.x/2, center.x+range.x/2), uniform(center.y-range.y/2, center.y+range.y/2), uniform(center.z-range.z/2, center.z+range.z/2)), hg.Vec3(0, radians(uniform(y_orientations_range.x, y_orientations_range.y)), 0))
 
-			ac.reset_matrix(hg.Vec3(uniform(center.x - range.x / 2, center.x + range.x / 2), uniform(center.y - range.y / 2, center.y + range.y / 2), uniform(center.z - range.z / 2, center.z + range.z / 2)), hg.Vec3(0, radians(uniform(y_orientations_range.x, y_orientations_range.y)), 0))
+			ac.reset_matrix(
+				hg.Vec3(
+					uniform(center.x - range.x / 2, center.x + range.x / 2),
+					uniform(center.y - range.y / 2, center.y + range.y / 2),
+					uniform(center.z - range.z / 2, center.z + range.z / 2)
+				),
+				hg.Vec3(0, radians(uniform(y_orientations_range.x, y_orientations_range.y)), 0)
+			)
 			gear = ac.get_device("Gear")
 			if gear is not None:
 				gear.record_start_state(False)
@@ -490,35 +497,51 @@ class Missions:
 			else:
 				print("Mission configuration json file empty : " + file_name)
 
-		main.create_aircraft_carriers(mission.allies_carriers, mission.ennemies_carriers)
+		#main.create_aircraft_carriers(mission.allies_carriers, mission.ennemies_carriers)
 		main.create_players(mission.allies, mission.ennemies)
 
-		cls.setup_carriers(main.aircraft_carrier_allies, hg.Vec3(0, 0, 0), hg.Vec3(500, 0, 100), 0)
-		cls.setup_carriers(main.aircraft_carrier_ennemies, hg.Vec3(-17000, 0, 0), hg.Vec3(500, 0, -150), radians(90))
+		#cls.setup_carriers(main.aircraft_carrier_allies, hg.Vec3(0, 0, 0), hg.Vec3(500, 0, 100), 0)
+		#cls.setup_carriers(main.aircraft_carrier_ennemies, hg.Vec3(-17000, 0, 0), hg.Vec3(500, 0, -150), radians(90))
 
 		main.init_playground()
 
 		# Sets aircrafts landed on carriers:
 
 		n = len(main.players_allies)
+		
 		if n == 1:
+			cls.aircrafts_starts_in_sky(
+				main.players_allies, hg.Vec3(0, 1000, -200), hg.Vec3(0, 0, 0),
+				hg.Vec2(0, 1), hg.Vec2(300 / 3.6, 300 / 3.6))
+			"""
 			cls.aircrafts_starts_on_carrier(
 				main.players_allies, main.aircraft_carrier_allies[0],
 				hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
+			"""
 		elif n > 1:
+			pass
+			"""
 			cls.aircrafts_starts_on_carrier(
 				main.players_allies[0:n // 2], main.aircraft_carrier_allies[0],
 				 hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20), 2, 2)
 			cls.aircrafts_starts_on_carrier(
 				main.players_allies[n // 2:n], main.aircraft_carrier_allies[0],
 				hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 3, 2)
+			"""
 
 		n = len(main.players_ennemies)
 		if n == 1:
-			cls.aircrafts_starts_on_carrier(main.players_ennemies, main.aircraft_carrier_ennemies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
+			cls.aircrafts_starts_in_sky(
+				main.players_ennemies, hg.Vec3(0, 1000, 200), hg.Vec3(0, 0, 0),
+				hg.Vec2(178, 180), hg.Vec2(300 / 3.6, 300 / 3.6))
+			
+			#cls.aircrafts_starts_on_carrier(main.players_ennemies, main.aircraft_carrier_ennemies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
 		elif n > 1:
+			pass
+			"""
 			cls.aircrafts_starts_on_carrier(main.players_ennemies[0:n // 2], main.aircraft_carrier_ennemies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20), 2, 2)
 			cls.aircrafts_starts_on_carrier(main.players_ennemies[n // 2:n], main.aircraft_carrier_ennemies[0], hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 3, 2)
+			"""
 
 		for i, ac in enumerate(main.players_allies[1:]):
 			ia = ac.get_device("IAControlDevice")
@@ -528,8 +551,9 @@ class Missions:
 		for i, ac in enumerate(main.players_ennemies):
 			ia = ac.get_device("IAControlDevice")
 			if ia is not None:
-				ia.activate()
-				#ia.deactivate()
+				#ia.activate()
+				ia.IA_command = AircraftIAControlDevice.IA_COM_FIGHT
+				ia.deactivate()
 
 		# ------- Missile Launcher:
 		main.create_missile_launchers(0, 1)
@@ -550,8 +574,10 @@ class Missions:
 
 		main.activate_cockpit_view()			
 		main.update_main_view_from_carousel()	# set to cockpit_view
+
 		main.scene.GetCurrentCamera().GetCamera().SetFov(
-			main.scene.GetCurrentCamera().GetCamera().GetFov() * 1.6
+			1.4
+			#main.scene.GetCurrentCamera().GetCamera().GetFov() * 1.6
 		)
 
 
@@ -597,8 +623,6 @@ class Missions:
 		Overlays.add_text2D(msg_title, hg.Vec2(0.5, 771 / 900 - 0.15), 0.04, hg.Color(1, 0.9, 0.3, 1), main.title_font, hg.DTHA_Center)
 		Overlays.add_text2D(msg_debriefing, hg.Vec2(0.5, 701 / 900 - 0.15), 0.02, hg.Color(1, 0.9, 0.8, 1), main.hud_font, hg.DTHA_Center)
 
-		print("end_phase_update finished")
-
 	@classmethod
 	# Aircrafts currently available: "F14", "F14_2", "Rafale", "Eurofighter", "F16", "TFX", "Miuss"
 	def init(cls):
@@ -620,14 +644,10 @@ class Missions:
 		cls.missions.append(Mission(
 			"Training with Rafale", [], ["Rafale"], 0, 1,
 			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission(
-			"Training with Eurofighter", [], ["Eurofighter"], 0, 1,
-			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission(
-			"Training with TFX", [], ["TFX"], 0, 1,
-			Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission("Training with F16", [], ["F16"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
-		cls.missions.append(Mission("Training with Miuss", [], ["Miuss"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		#cls.missions.append(Mission("Training with Eurofighter", [], ["Eurofighter"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		#cls.missions.append(Mission("Training with TFX", [], ["TFX"], 0, 1,Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		#cls.missions.append(Mission("Training with F16", [], ["F16"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
+		#cls.missions.append(Mission("Training with Miuss", [], ["Miuss"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 		#cls.missions.append(Mission("Training with F14", [], ["F14"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 		#cls.missions.append(Mission("Training with F14 2", [], ["F14_2"], 0, 1, Missions.mission_setup_training, Missions.mission_training_end_test, Missions.mission_training_end_phase_update))
 

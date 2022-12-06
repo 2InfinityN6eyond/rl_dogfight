@@ -1361,7 +1361,9 @@ class Aircraft(Destroyable_Machine):
         self.bottom_height = 0.96
         self.gear_height = 2
         self.parts_angles = hg.Vec3(radians(15), radians(45), radians(45))
-        self.thrust_force = 10
+        
+        #self.thrust_force = 10 # 원래 기본은 10인데 에프터버너를 끄고 출력을 올림
+        self.thrust_force = 15
         self.post_combustion_force = self.thrust_force / 2
         self.drag_coeff = hg.Vec3(0.033, 0.06666, 0.0002)
         self.wings_lift = 0.0005
@@ -1762,7 +1764,6 @@ class Aircraft(Destroyable_Machine):
         md = self.get_device("MissilesDevice")
         if md is not None:
             md.rearm()
-
 
     # ============================ Engines
 

@@ -48,8 +48,10 @@ def listener_socket(port_):
 
 
 def close_socket():
-	sock.close()
-
+	try :
+		sock.close()
+	except Exception as e :
+		print(e)
 
 def check_send_message(cv):
 	while 1:

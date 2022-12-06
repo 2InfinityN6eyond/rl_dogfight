@@ -9,6 +9,7 @@ from Machines import *
 from overlays import *
 import math
 import Physics
+import SmartCamera
 
 main = None
 dogfight_network_port = 50888
@@ -104,6 +105,8 @@ def init_server(main_):
 		"RESET_GEAR": reset_gear,
 		"RECORD_PLANE_START_STATE": record_plane_start_state,
 
+		"ROTATE_FIX_COCKPIT_CAMERA": rotate_fix_cockpit_camera,
+
 		# Missiles
 		"GET_MISSILESLIST": get_missiles_list,
 		"GET_MISSILE_STATE": get_missile_state,
@@ -140,6 +143,10 @@ def stop_server():
 	msg = "Exit from server"
 	server_log += msg
 	print(msg)
+
+	socket_lib.close_socket()
+
+	print("--server stopped--")
 
 
 def server_update():
@@ -737,6 +744,15 @@ def record_plane_start_state(args):
 	machine = main.destroyables_items[args["plane_id"]]
 	machine.record_start_state()
 
+def rotate_fix_cockpit_camera(args) :
+	smart_camera = main.smart_camera
+	if smart_camera.flag_fix_mouse_controls_rotation and not smart_camera.flag_reseting_rotation :
+		try :
+			main.smart_camera.fix_rot.x = args["x"]
+			main.smart_camera.fix_rot.y = args["y"]
+		except Exception as e :
+			print(e)
+
 
 def set_plane_linear_speed(args):
 	machine = main.destroyables_items[args["plane_id"]]
@@ -752,6 +768,8 @@ def reset_gear(args):
 
 
 def set_plane_thrust(args):
+
+	print("setting thrust")
 	if flag_print_log:
 		print(args["plane_id"] + " " + str(args["thrust_level"]))
 	machine = main.destroyables_items[args["plane_id"]]
@@ -848,6 +866,9 @@ def retract_gear(args):
 	gear = machine.get_device("Gear")
 	if gear is not None:
 		gear.deactivate()
+
+def toggle_gear(args) :
+	pass
 
 
 def set_plane_autopilot_speed(args):

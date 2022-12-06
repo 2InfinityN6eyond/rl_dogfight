@@ -2,6 +2,7 @@ import pygame
 import dogfight_client as df
 import time
 import sys
+import numpy as np
 
 class Button :
     def __init__(self, name, idx) :
@@ -181,6 +182,13 @@ class GameClient :
         
 
     def step(self, controller_state) :
+
+        # control view
+        fix_rot_x = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["lud"]].value * np.pi
+        fix_rot_y = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["llr"]].value * np.pi
+        df.rotate_fix_cockpit_camera(fix_rot_x, fix_rot_y)
+
+        # control airplane
         roll  = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rlr"]].value * -1
         pitch = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rud"]].value * -1
         yaw_l = max(controller_state["analog_buttons"][XboxPad.analog_button_idx_map["lt"]].value + 0.98, 0) * -1
@@ -190,6 +198,8 @@ class GameClient :
             yaw = yaw_l
         if yaw_r > 0 :
             yaw = yaw_r
+
+        print(f"{roll:.4f} {pitch:.4f} {yaw:.4f}")
         
         df.set_plane_pitch(self.planes[self.plane_idx],level = pitch)
         df.set_plane_roll(self.planes[self.plane_idx],level = roll)

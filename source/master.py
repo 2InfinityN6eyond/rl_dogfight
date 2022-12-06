@@ -754,6 +754,7 @@ class Main:
     @classmethod
     def update_main_view_from_carousel(cls):
         view_id = cls.views_carousel[cls.views_carousel_ptr]
+
         if view_id == "fps":
             cls.smart_camera.setup(SmartCamera.TYPE_FPS, cls.camera_fps)
             cls.scene.SetCurrentCamera(cls.camera_fps)

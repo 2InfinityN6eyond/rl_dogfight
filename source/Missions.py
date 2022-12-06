@@ -168,7 +168,10 @@ class Missions:
 			cls.aircrafts_starts_on_carrier(players[n1:n2], aircraft_carriers[i], hg.Vec3(-10, 19.5, 62), 0, hg.Vec3(0, 0, -18), start_time + 1 + na_row * 2 * i, 2)
 
 	@classmethod
-	def aircrafts_starts_in_sky(cls, aircrafts, center: hg.Vec3, range: hg.Vec3, y_orientations_range: hg.Vec2, speed_range: hg.Vec2):
+	def aircrafts_starts_in_sky(
+		cls, aircrafts, center: hg.Vec3, range: hg.Vec3,
+		y_orientations_range: hg.Vec2, speed_range: hg.Vec2
+	):
 		for i, ac in enumerate(aircrafts):
 			# ac.reset_matrix(hg.Vec3(uniform(center.x-range.x/2, center.x+range.x/2), uniform(center.y-range.y/2, center.y+range.y/2), uniform(center.z-range.z/2, center.z+range.z/2)), hg.Vec3(0, radians(uniform(y_orientations_range.x, y_orientations_range.y)), 0))
 
@@ -318,9 +321,13 @@ class Missions:
 
 		n = len(main.players_ennemies)
 		if n < 3:
-			cls.aircrafts_starts_in_sky(main.players_ennemies, hg.Vec3(-5000, 1000, 0), hg.Vec3(1000, 500, 2000), hg.Vec2(-180, 180), hg.Vec2(800 / 3.6, 600 / 3.6))
+			cls.aircrafts_starts_in_sky(
+				main.players_ennemies, hg.Vec3(-5000, 1000, 0), hg.Vec3(1000, 500, 2000),
+				hg.Vec2(-180, 180), hg.Vec2(800 / 3.6, 600 / 3.6))
 		else:
-			cls.aircrafts_starts_in_sky(main.players_ennemies[0:2], hg.Vec3(-5000, 1000, 0), hg.Vec3(1000, 500, 2000), hg.Vec2(-180, 180), hg.Vec2(800 / 3.6, 600 / 3.6))
+			cls.aircrafts_starts_in_sky(
+				main.players_ennemies[0:2], hg.Vec3(-5000, 1000, 0), hg.Vec3(1000, 500, 2000),
+				hg.Vec2(-180, 180), hg.Vec2(800 / 3.6, 600 / 3.6))
 			cls.aircrafts_starts_on_carrier(main.players_ennemies[2:n], main.aircraft_carrier_ennemies[0], hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 2, 1)
 
 		for i, ac in enumerate(main.players_allies):
@@ -495,10 +502,16 @@ class Missions:
 
 		n = len(main.players_allies)
 		if n == 1:
-			cls.aircrafts_starts_on_carrier(main.players_allies, main.aircraft_carrier_allies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
+			cls.aircrafts_starts_on_carrier(
+				main.players_allies, main.aircraft_carrier_allies[0],
+				hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
 		elif n > 1:
-			cls.aircrafts_starts_on_carrier(main.players_allies[0:n // 2], main.aircraft_carrier_allies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20), 2, 2)
-			cls.aircrafts_starts_on_carrier(main.players_allies[n // 2:n], main.aircraft_carrier_allies[0], hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 3, 2)
+			cls.aircrafts_starts_on_carrier(
+				main.players_allies[0:n // 2], main.aircraft_carrier_allies[0],
+				 hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20), 2, 2)
+			cls.aircrafts_starts_on_carrier(
+				main.players_allies[n // 2:n], main.aircraft_carrier_allies[0],
+				hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 3, 2)
 
 		n = len(main.players_ennemies)
 		if n == 1:
@@ -507,16 +520,16 @@ class Missions:
 			cls.aircrafts_starts_on_carrier(main.players_ennemies[0:n // 2], main.aircraft_carrier_ennemies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20), 2, 2)
 			cls.aircrafts_starts_on_carrier(main.players_ennemies[n // 2:n], main.aircraft_carrier_ennemies[0], hg.Vec3(-10, 19.5, 60), 0, hg.Vec3(0, 0, -20), 3, 2)
 
-		# Deactivate IA:
-		for i, ac in enumerate(main.players_allies):
+		for i, ac in enumerate(main.players_allies[1:]):
 			ia = ac.get_device("IAControlDevice")
 			if ia is not None:
-				ia.deactivate()
-
+				ia.activate()
+				#ia.deactivate()
 		for i, ac in enumerate(main.players_ennemies):
 			ia = ac.get_device("IAControlDevice")
 			if ia is not None:
-				ia.deactivate()
+				ia.activate()
+				#ia.deactivate()
 
 		# ------- Missile Launcher:
 		main.create_missile_launchers(0, 1)
@@ -534,6 +547,13 @@ class Missions:
 
 		main.user_aircraft = main.get_player_from_caroursel_id(main.views_carousel[main.views_carousel_ptr])
 		main.user_aircraft.set_focus()
+
+		main.activate_cockpit_view()			
+		main.update_main_view_from_carousel()	# set to cockpit_view
+		main.scene.GetCurrentCamera().GetCamera().SetFov(
+			main.scene.GetCurrentCamera().GetCamera().GetFov() * 1.6
+		)
+
 
 		uctrl = main.user_aircraft.get_device("UserControlDevice")
 		if uctrl is not None:
@@ -573,8 +593,11 @@ class Missions:
 		else:
 			msg_title = "Successful !"
 			msg_debriefing = "Congratulation commander !"
+
 		Overlays.add_text2D(msg_title, hg.Vec2(0.5, 771 / 900 - 0.15), 0.04, hg.Color(1, 0.9, 0.3, 1), main.title_font, hg.DTHA_Center)
 		Overlays.add_text2D(msg_debriefing, hg.Vec2(0.5, 701 / 900 - 0.15), 0.02, hg.Color(1, 0.9, 0.8, 1), main.hud_font, hg.DTHA_Center)
+
+		print("end_phase_update finished")
 
 	@classmethod
 	# Aircrafts currently available: "F14", "F14_2", "Rafale", "Eurofighter", "F16", "TFX", "Miuss"

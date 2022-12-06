@@ -280,8 +280,15 @@ def set_plane_linear_speed(plane_id, speed):
 
 
 def record_plane_start_state(plane_id):
-	socket_lib.send_message(str.encode(json.dumps({"command": "RECORD_PLANE_START_STATE", "args": {"plane_id": plane_id}})))
+	socket_lib.send_message(str.encode(json.dumps(
+		{"command": "RECORD_PLANE_START_STATE", "args": {"plane_id": plane_id}})))
 
+def rotate_fix_cockpit_camera(x, y) :
+	try :
+		socket_lib.send_message(str.encode(json.dumps(
+			{"command": "ROTATE_FIX_COCKPIT_CAMERA", "args": {"x": x, "y":y}})))
+	except Exception as e :
+		print(e)
 
 def set_plane_brake(plane_id, level):
 	socket_lib.send_message(str.encode(json.dumps({"command": "SET_PLANE_BRAKE", "args": {"plane_id": plane_id, "brake_level": level}})))

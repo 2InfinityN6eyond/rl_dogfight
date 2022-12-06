@@ -5,7 +5,7 @@ from math import radians, sqrt, pi, acos, asin
 import MathsSupp as ms
 import Physics
 from Machines import Destroyable_Machine
-
+import debug_printer
 
 class SmartCamera:
 	TYPE_FOLLOW = 1
@@ -195,10 +195,12 @@ class SmartCamera:
 
 	def update_fix_camera(self, camera, dts, noise_level=0):
 		f = radians(noise_level)
-		rot = hg.Vec3(self.noise_x.temporal_Perlin_noise(dts) * f, self.noise_y.temporal_Perlin_noise(dts) * f, self.noise_z.temporal_Perlin_noise(dts) * f)
+		rot = hg.Vec3(
+			self.noise_x.temporal_Perlin_noise(dts) * f,
+			self.noise_y.temporal_Perlin_noise(dts) * f,
+			self.noise_z.temporal_Perlin_noise(dts) * f)
 
 		if self.flag_fix_mouse_controls_rotation:
-
 			if self.flag_reseting_rotation:
 				self.fix_rot = self.fix_rot * 0.9
 				camera.GetTransform().SetRot(self.fix_rot)
@@ -206,21 +208,33 @@ class SmartCamera:
 					self.fix_rot.x = self.fix_rot.y = self.fix_rot.z = 0
 					self.flag_reseting_rotation = False
 				rot = rot + self.fix_rot
-			else:
+			
+			else: 
 				if self.mouse.Pressed(hg.MB_1):
 					self.flag_reseting_rotation = True
-				if not self.flag_hovering_gui:
+				if not self.flag_hovering_gui: # cockpit view 로 설정해서 마우스로 시야를 조절할 떄 이리로 옴 
+				
 					cam_t = camera.GetTransform()
 					cam_fov = camera.GetCamera().GetFov()
 					rot_fov = hg.Vec3(self.fix_rot)
-					hg.FpsController(self.keyboard, self.mouse, self.fix_pos, self.fix_rot, 0, hg.time_from_sec_f(dts))
+					
+					hg.FpsController(
+						self.keyboard, self.mouse, self.fix_pos, self.fix_rot, 0, hg.time_from_sec_f(dts)
+					)
+
 					self.fix_rot = rot_fov + (self.fix_rot - rot_fov) * cam_fov / (40/180*pi)
 
+					# 원래 주석돼있었음
 					#cam_pos0 = cam_t.GetPos()
 					#cam_t.SetPos(cam_pos0 + (self.fps_pos - cam_pos0) * self.fps_pos_inertia)
+					
+					
+					
 					cam_rot0 = cam_t.GetRot()
 					rot = rot + cam_rot0 + (self.fix_rot - cam_rot0) * self.fix_rot_inertia
 
+
+		# 이게 비활성화되면 FpsController에서 한게 적용이 안되는듯
 		camera.GetTransform().SetRot(rot)
 
 	# ============== Camera follow ==================

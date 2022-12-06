@@ -783,7 +783,7 @@ class MissileLauncherUserControlDevice(ControlDevice):
     # =============================== Logitech Attack 3 ====================================
 
     def switch_activation_la3(self, value):
-        pass
+        pass 
 
     def next_pilot_la3(self, value):
         pass

@@ -6,7 +6,7 @@ from Missions import *
 from SmartCamera import *
 from HUD import *
 from overlays import *
-
+import debug_printer
 
 def init_menu_phase():
     Main.flag_running = False
@@ -362,9 +362,8 @@ def update_main_phase(dts):
     if Main.satellite_view:
         cam = Main.satellite_camera
 
-
-
     Main.smart_camera.update(cam, dts, camera_noise_level)
+
 
     mission = Missions.get_current_mission()
 

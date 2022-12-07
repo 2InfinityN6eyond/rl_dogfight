@@ -655,6 +655,7 @@ def get_plane_state(args):
 	iactrl = machine.get_device("IAControlDevice")
 	td = machine.get_device("TargettingDevice")
 
+
 	if gear is not None:
 		gear_activated = gear.activated
 	else:
@@ -682,6 +683,17 @@ def get_plane_state(args):
 	else:
 		target_id = "- ! No TargettingDevice ! -"
 		target_locked = False
+
+	try :
+		hit_count = 0
+		bullet_count = 0
+		n = machine.get_machinegun_count()
+		for i in range(n):
+			mgd = machine.get_device("MachineGunDevice_%02d" % i)
+			hit_count += mgd.hit_count
+			bullet_count += mgd.get_num_bullets()
+	except Exception as e :
+		print(e)
 
 	position = machine.get_position()
 	rotation = machine.get_Euler()
@@ -722,7 +734,9 @@ def get_plane_state(args):
 		"autopilot_speed": autopilot_speed,
 		"autopilot_altitude": autopilot_altitude,
 		"target_id": target_id,
-		"target_locked": target_locked
+		"target_locked": target_locked,
+		"hit_count" : hit_count,
+		"num_bullet" : bullet_count
 	}
 	if flag_print_log:
 		print(args["plane_id"])

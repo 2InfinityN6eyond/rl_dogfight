@@ -153,7 +153,7 @@ while not Main.flag_exit:
             ):
             Main.update()
         else: # renderless mode, flag_client_update_mode
-            time.sleep(1 / 120)
+            time.sleep(1e-6)
             
         Main.update_window()
 

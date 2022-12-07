@@ -511,7 +511,7 @@ class Missions:
 		
 		if n == 1:
 			cls.aircrafts_starts_in_sky(
-				main.players_allies, hg.Vec3(0, 1000, -200), hg.Vec3(0, 0, 0),
+				main.players_allies, hg.Vec3(200, 1000, 0), hg.Vec3(0, 0, 0),
 				hg.Vec2(0, 1), hg.Vec2(300 / 3.6, 300 / 3.6))
 			"""
 			cls.aircrafts_starts_on_carrier(

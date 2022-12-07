@@ -170,19 +170,23 @@ class XboxCockpit :
         self.xbox_pad = XboxPad()
         self.prev_thrust = 0
 
+        self.flag_renderless_mode = -1
+
     def update(self) :
         self.xbox_pad.read()
         controller_state = self.xbox_pad.curr_state
 
-        roll  = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rlr"]].value * -1
-        pitch = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rud"]].value * -1
-        yaw_l = max(controller_state["analog_buttons"][XboxPad.analog_button_idx_map["lt"]].value + 0.98, 0) * -1
-        yaw_r = max(controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rt"]].value + 0.98, 0)
-        yaw = 0
+        roll  = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rlr"]].value * -1.5
+        pitch = controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rud"]].value * -1.5
+        yaw_l = max(controller_state["analog_buttons"][XboxPad.analog_button_idx_map["lt"]].value + 0.98, 0) * -0.7
+        yaw_r = max(controller_state["analog_buttons"][XboxPad.analog_button_idx_map["rt"]].value + 0.98, 0) * 0.7
+        yaw = yaw_l + yaw_r
+        '''
         if yaw_l < 0 :
             yaw = yaw_l
         if yaw_r > 0 :
             yaw = yaw_r
+        '''
 
         # control view
         fix_rot_x = 0
@@ -196,9 +200,9 @@ class XboxCockpit :
         
         accellerate = 0
         if controller_state["hat_buttons"]["up"].value :
-            accellerate += 0.1
+            accellerate += 0.01
         if controller_state["hat_buttons"]["down"].value :
-            accellerate -= 0.1
+            accellerate -= 0.01
         thrust = max(0, min(1, self.prev_thrust + accellerate))
         self.prev_thrust = thrust
 
@@ -211,6 +215,9 @@ class XboxCockpit :
         
         quit_game = controller_state["buttons"][XboxPad.button_name_idx_map["x"]].pressed
         
+        if controller_state["buttons"][XboxPad.button_name_idx_map["a"]].pressed :
+            self.flag_renderless_mode *= -1
+
         control_action = {}
         control_action["roll"]  = roll
         control_action["pitch"] = pitch
@@ -221,6 +228,7 @@ class XboxCockpit :
         control_action["activate_post_combustion"] = activate_post_combustion
         control_action["deactivate_post_combustion"] = deactivate_post_combustion
         control_action["quit_game"] = quit_game
+        control_action["flag_renderless_mode"] = True if self.flag_renderless_mode > 0 else False
 
         return control_action
 

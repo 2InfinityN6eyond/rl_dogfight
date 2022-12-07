@@ -126,9 +126,10 @@ df.activate_autopilot(plane_id)
 df.set_renderless_mode(False)
 
 # Wait while Renderless mode setting up
-f = False
-while not f:
-	f = df.get_running()["running"]
+
+#f = False
+#while not f:
+#	f = df.get_running()["running"]
 
 # Client update mode OFF
 df.set_client_update_mode(False)

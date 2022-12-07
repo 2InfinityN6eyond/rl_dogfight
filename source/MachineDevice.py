@@ -418,7 +418,12 @@ class MachineGun(MachineDevice):
         self.scene = scene
         self.scene_physics = scene_physics
         self.slot_node = slot_node
-        self.bullets_particles = ParticlesEngine(name, scene, bullet_node_name, 24, hg.Vec3(2, 2, 20), hg.Vec3(20, 20, 100), 0.1, 0, "uColor0", True)
+        self.bullets_particles = ParticlesEngine(
+            name, scene, bullet_node_name,
+            num_particles = 24,
+            start_scale = hg.Vec3(2, 2, 20), end_scale = hg.Vec3(20, 20, 100),
+            stream_angle = 0.1, life_time = 0, color_label = "uColor0", write_z= True
+        )
 
         # ParticlesEngine.__init__(self, name, scene, bullet_node_name, 24, hg.Vec3(2, 2, 20), hg.Vec3(20, 20, 100), 0.1, 0, "uColor0", True)
 
@@ -429,6 +434,8 @@ class MachineGun(MachineDevice):
         self.bullets_particles.linear_damping = 0
         self.bullets_particles.scale_range = hg.Vec2(1, 1)
         self.bullets_particles.particles_cnt_max = num_bullets
+
+        self.hit_count = 0
 
         self.bullets_feed_backs = []
         #if Destroyable_Machine.flag_activate_particles:
@@ -443,8 +450,10 @@ class MachineGun(MachineDevice):
             self.destroy_feedbacks()
 
         for i in range(self.bullets_particles.num_particles):
-            fb = ParticlesEngine(self.name + ".fb." + str(i), self.scene, "bullet_impact", 5,
-                                 hg.Vec3(1, 1, 1), hg.Vec3(10, 10, 10), 180)
+            fb = ParticlesEngine(
+                self.name + ".fb." + str(i), self.scene, "bullet_impact", 5,
+                hg.Vec3(1, 1, 1), hg.Vec3(10, 10, 10), 180
+            )
             fb.delay_range = hg.Vec2(1, 1)
             fb.flow = 0
             fb.scale_range = hg.Vec2(1, 3)
@@ -486,7 +495,25 @@ class MachineGun(MachineDevice):
             v0 = self.machine.v_move
             position = pos_prec + v0 * dts
 
-            self.bullets_particles.update_kinetics(position, direction, v0, axisY, dts)
+            """
+            bullet_2_target_distance_sum_prev = 0 # sum of every distance between bullets and target
+            for i in range(self.bullets_particles.num_particles) :
+                bullet = self.bullets_particles.particles[i]
+                mat = bullet.node.GetTransform()
+                pos_fb = mat.GetPos()
+                if bullet.get_enabled():
+                    for target in targets:
+                        distance = hg.Len(target.get_parent_node().GetTransform().GetPos()-pos_fb)
+                        bullet_2_target_distance_sum_prev += distance        
+            """
+
+            # update particle engine
+            self.bullets_particles.update_kinetics(
+                position, direction, v0, axisY, dts
+            )
+
+            self.hit_count = 0
+            bullet_2_target_distance_sum = 0
             for i in range(self.bullets_particles.num_particles):
                 bullet = self.bullets_particles.particles[i]
                 mat = bullet.node.GetTransform()
@@ -494,17 +521,11 @@ class MachineGun(MachineDevice):
                 # pos = hg.GetT(mat) - hg.GetZ(mat)
 
                 if bullet.get_enabled():
-                    # spd = hg.Len(bullet.v_move)
-                    if pos_fb.y < 1:
-                        bullet.v_move *= 0
-                        self.strike(i)
-
-                    p1 = pos_fb + bullet.v_move
-
+                    
                     #Collision using distance:
-
                     for target in targets:
                         distance = hg.Len(target.get_parent_node().GetTransform().GetPos()-pos_fb)
+                        bullet_2_target_distance_sum += distance
                         #print(distance, end = " ")
                     
                         if distance < 20: #2 * hg.Len(bullet.v_move) * dts:
@@ -512,9 +533,19 @@ class MachineGun(MachineDevice):
                             print("hit", self.machine.name, "->", target.name)
 
                             target.hit(0.1)
+                            self.hit_count += 1
+
                             bullet.v_move = target.v_move
 
                             self.strike(i)
+
+
+                    # spd = hg.Len(bullet.v_move)
+                    if pos_fb.y < 1:
+                        bullet.v_move *= 0
+                        self.strike(i)
+
+                    p1 = pos_fb + bullet.v_move
 
                     """
                     rc_len = hg.Len(p1 - pos_fb)
@@ -538,7 +569,7 @@ class MachineGun(MachineDevice):
                     fb = self.bullets_feed_backs[i]
                     if not fb.end and fb.flow > 0:
                         fb.update_kinetics(pos_fb, hg.Vec3.Front, bullet.v_move, hg.Vec3.Up, dts)
-
+            
     def get_num_bullets(self):
         return self.bullets_particles.particles_cnt_max - self.bullets_particles.particles_cnt
 

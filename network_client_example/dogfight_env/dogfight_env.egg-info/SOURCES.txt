@@ -1,0 +1,9 @@
+setup.py
+dogfight_env/__init__.py
+dogfight_env.egg-info/PKG-INFO
+dogfight_env.egg-info/SOURCES.txt
+dogfight_env.egg-info/dependency_links.txt
+dogfight_env.egg-info/requires.txt
+dogfight_env.egg-info/top_level.txt
+dogfight_env/envs/__init__.py
+dogfight_env/envs/dogfight_env.py

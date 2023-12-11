@@ -62,7 +62,11 @@ class ParticlesEngine:
 				cls.current_item = d
 		hg.ImGuiEnd()
 
-	def __init__(self, name, scene, original_node_name, num_particles, start_scale, end_scale, stream_angle, life_time=0., color_label="uColor", write_z=False):
+	def __init__(
+		self, name, scene, original_node_name,
+		num_particles, start_scale, end_scale,
+		stream_angle, life_time=0., color_label="uColor", write_z=False
+	):
 		self.scene = scene
 		self.name = name
 		ParticlesEngine._instances.append(self)
@@ -157,7 +161,9 @@ class ParticlesEngine:
 		self.life_time = life_time
 		self.life_t = 0
 
-	def update_kinetics(self, position: hg.Vec3, direction: hg.Vec3, v0: hg.Vec3, axisY: hg.Vec3, dts):
+	def update_kinetics(
+		self, position: hg.Vec3, direction: hg.Vec3, v0: hg.Vec3, axisY: hg.Vec3, dts
+	):
 
 		if self.life_time > 0:
 			self.life_t = min(self.life_time, self.life_t + dts)

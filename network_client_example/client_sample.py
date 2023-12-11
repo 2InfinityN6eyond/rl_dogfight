@@ -50,8 +50,15 @@ while t < 1:
 	plane_state = df.get_plane_state(plane_id)
 	# Display text & vector - !!! Must be called before update_scene() !!!
 	# !!! Display text & vector only works in Client Update Mode !!!
-	df.display_2DText([0.25, 0.75], "Plane speed: " + str(plane_state["linear_speed"]), 0.04, [1, 0.5, 0, 1])
-	df.display_vector(plane_state["position"], plane_state["move_vector"], "Linear speed: " + str(plane_state["linear_speed"]), [0, 0.02], [0, 1, 0, 1], 0.02)
+	df.display_2DText(
+		[0.25, 0.75],
+		"Plane speed: " + str(plane_state["linear_speed"]),
+		0.04, [1, 0.5, 0, 1]
+	)
+	df.display_vector(
+		plane_state["position"], plane_state["move_vector"],
+		"Linear speed: " + str(plane_state["linear_speed"]),
+		[0, 0.02], [0, 1, 0, 1], 0.02)
 	# Update frame:
 	df.update_scene()
 	#print_fps()

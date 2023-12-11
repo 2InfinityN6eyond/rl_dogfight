@@ -20,7 +20,10 @@ terrain_scale = hg.Vec3(41480, 1000, 19587)
 map_bounds = hg.Vec2(0, 255)
 
 
-def init_physics(scn, scn_physics, terrain_heightmap_file, p_terrain_pos, p_terrain_scale, p_map_bounds):
+def init_physics(
+	scn, scn_physics, terrain_heightmap_file,
+	p_terrain_pos, p_terrain_scale, p_map_bounds
+):
 	global scene, scene_physics, terrain_heightmap, terrain_position, terrain_scale, map_bounds
 	scene = scn
 	scene_physics = scn_physics

@@ -148,9 +148,9 @@ while not Main.flag_exit:
         
         if (
             not Main.flag_client_update_mode
-            ) or (
-                (not Main.flag_renderless) and Main.flag_client_ask_update_scene
-            ):
+        ) or (
+            (not Main.flag_renderless) and Main.flag_client_ask_update_scene
+        ):
             Main.update()
         else: # renderless mode, flag_client_update_mode
             time.sleep(1e-6)

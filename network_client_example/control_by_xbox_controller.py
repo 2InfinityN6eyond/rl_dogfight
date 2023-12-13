@@ -16,24 +16,38 @@ if __name__ == "__main__":
     SERVER_IP = "192.168.219.108"
     SERVER_IP = "192.168.219.108"
     SERVER_IP = "192.168.219.108"
-    SERVER_IP = "192.168.219.108"
+    SERVER_IP = "192.168.219.104"
     SERVER_PORT = 50888
 
     xbox_cockpit = XboxCockpit()
-    game_client = GameClient(SERVER_IP, SERVER_PORT, enable_autopilot=True)
+    game_client = GameClient(
+        SERVER_IP,
+        SERVER_PORT,
+        enable_autopilot=True,
+        enable_render=False
+    )
+    
     game_client.connect()
     plane_names = game_client.resetGame()
     user_plane_name = plane_names[0]
 
     prev_time_stamp = time.time()
 
+    i = 0
     while True :
 
         control_action = xbox_cockpit.update()
+
+
+
+
         observations, is_done = game_client.update({
             plane_name : control_action for plane_name in plane_names
         })
  
+
+
+
         ally_observation = observations[user_plane_name]
         #distance = game_client.distanceToBoundary(observation)
 
@@ -52,29 +66,20 @@ if __name__ == "__main__":
         enemy_velocity    = enemy_observation["move_vector"]
         
 
-                
+
+
         relative_position = np.array(enemy_position) - np.array(ally_position)
 
-        
-        # get angle between ally velocity and vector from ally to enemy
-        angle_to_enemy = np.arccos(
-            np.dot(
-                ally_velocity, relative_position
-            ) / (
-                np.linalg.norm(ally_velocity) * np.linalg.norm(relative_position)
-            )
+        t_dir = relative_position / np.linalg.norm(relative_position)
+        dir = np.array(ally_observation["aZ"])
+
+        target_angle = np.arccos(np.dot(t_dir, dir) / (np.linalg.norm(t_dir) * np.linalg.norm(dir)))   
+    
+
+        print(
+            "target_angle: ", int(target_angle * 180 / np.pi),
+            np.dot(dir / np.linalg.norm(dir), ally_velocity / np.linalg.norm(ally_velocity)),
         )
-        
-        distance = np.linalg.norm(relative_position, ord = 2)
-
-        print("angle :", f"{str(np.rad2deg(angle_to_enemy))}",  "distance", distance)
-
-        #print("p", ally_position) #, "v", ally_velocity, "a", ally_euler_angle)
-        #print("angle", ally_euler_angle)
-        
-
-        #print("target_id", observation["target_id"], obs_enemy["target_id"])
-        #print(observation["cos_angle_to_enemy"])
         """
         if observation["hit_count"] :
             print( "num_bullet", observation["num_bullet"], "hit :", observation["hit_count"])

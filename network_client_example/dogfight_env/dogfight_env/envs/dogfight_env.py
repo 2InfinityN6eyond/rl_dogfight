@@ -67,11 +67,13 @@ class DogfightEnv(gym.Env) :
         )
         self.game_client.connect()
 
+        self.prev_info_cache = None
+
     def reset(self, seed=None, options=None):
-        print("resetting")
         super().reset(seed=seed)
 
-        self.prev_observations = None
+
+        self.prev_info_cache = None
         self.plane_names = self.game_client.resetGame()
         self.plane_name_idx_map = {
             plane_name:idx for idx, plane_name in enumerate(self.plane_names)
@@ -87,11 +89,16 @@ class DogfightEnv(gym.Env) :
         """
         raw_observations, is_done = self.game_client.update(control_action)
         observations = self.processRawObservation(raw_observations)
-        reward = self.calcReward(observations)
+        raw_reward = self.calcReward(observations, raw_observations)
 
-        #print(reward)
+        for v in observations.values() :
+            if v["loose"] :
+                is_done = True
+                break
+        
+        reword = float(raw_reward[0])
 
-        return observations, reward, is_done, is_done, raw_observations
+        return observations, reword, is_done, is_done, raw_observations
 
     def render(self):
         if self.render_mode == "rgb_array":
@@ -124,104 +131,82 @@ class DogfightEnv(gym.Env) :
             for enemy_idx, enemy_obs in observations.items() :
                 if enemy_idx == plane_idx :
                     continue
-                vec_to_enemy = enemy_obs["position"] - my_obs["position"]
+                vec_to_enemy = enemy_obs["position"] - my_obs["position"] 
                 vec_to_enemy_norm = vec_to_enemy / np.linalg.norm(vec_to_enemy)
                 #my_direction = my_obs["velocity"] / np.linalg.norm(my_obs["velocity"])
 
                 v_norm =  my_obs["velocity"] / np.linalg.norm(my_obs["velocity"])
 
                 cos_angle_to_enemy = np.dot(vec_to_enemy_norm, obs["velocity_norm"])
-                if plane_idx == 0 :
-                    """
-                    print(
-                        "{:5d} {:5d}".format(
-                            int(my_obs["dist_from_origin"]),
-                            int(np.inner(my_obs['position'], my_obs["velocity"]))
-                        )
-                    )
-                    """
-
-                    format_str = "{:3d} {:4d}  " * 3
-                    print(
-                        format_str.format(
-                            *np.array([
-                                my_obs["velocity"],
-                                my_obs["position"],
-                            ]).transpose().reshape(-1).astype(np.int32)
-                        )
-                    )
-
-
-                    """
-                    format_str = "{:3.3f}  "*6
-                    print(
-                        format_str.format(
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[1, 2, 0]]),
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[0, 1, 2]]),
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[0, 2, 1]]),
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[1, 0, 2]]),
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[2, 0, 1]]),
-                            np.inner(vec_to_enemy_norm, obs["velocity_norm"][[2, 1, 0]])
-                        ),
-                        #int(np.linalg.norm(vec_to_enemy)),
-                    )
-                    """
 
                 observations[plane_idx]["angle_to_enemy"] = np.arccos(cos_angle_to_enemy)
                 if enemy_obs["loose"] :
                     observations[plane_idx]["won"] = True
         return observations
 
-    def calcReward(self, observations) :
-        if not self.prev_observations :
-            self.prev_observations = observations
-            return 0
+    def savePrevInfo(self, observations, info) :
+        copy_info = {}
+        for k, v in info.items() :
+            plane_idx = self.plane_name_idx_map[k]
+            copy_info[plane_idx] = v.copy()
+        self.prev_info_cache = copy_info
+
+    def calcReward(self, observations, info) :
+        if not self.prev_info_cache :
+            self.savePrevInfo(observations, info)
+            return {
+                plane_idx : 0 for plane_idx in observations
+            }
 
         rewards = {}
         for plane_idx, obs in observations.items() :
-            reward = 0            
-            prev_obs = self.prev_observations[plane_idx]
+            reward = 0
 
-            num_bullet_fired = prev_obs["num_bullet"] - obs["num_bullet"]
+            my_prev_info = self.prev_info_cache[plane_idx]
+            opponent_prev_info = self.prev_info_cache[1 - plane_idx]
 
-            reward += obs["hit_count"] * 10000
-            reward += num_bullet_fired * (10 / (obs["angle_to_enemy"] + 0.2))
-            reward += num_bullet_fired * -15
+            my_cur_info = info[self.plane_names[plane_idx]]
+            opponent_cur_info = info[self.plane_names[1 - plane_idx]]
 
-            if plane_idx == 0 and  reward != 0 :
-                print(int(obs["angle_to_enemy"] / np.pi * 180), reward)                
-
-            # punish
-            if obs["num_bullet"] == 0 :
-                reward -= 1000
-
-            reward += (prev_obs["health_level"] - obs["health_level"]) * -10000
-            
-            if obs["loose"] == True :
-                reward -= -10000
-            elif obs["won"] == True :
-                reward += 10000
-            
-            reward -= (obs["dist_from_origin"] / self.gladius_radius) ** 3 * 1000
-            rewards[plane_idx] = reward
-            
-            """
-            print(
-                "{} dist:{} fired:{} hit:{} gun_reward:{} health_diff:{} total:{}".format(
-                    plane_name,
-                    int(obs["dist_from_origin"]),
-                    num_bullet_fired,
-                    obs["hit_count"],
-                    num_bullet_fired * obs["angle_to_enemy"]**3 - num_bullet_fired * -1,
-                    prev_obs["health_level"] - obs["health_level"],
-                    rewards[plane_name]
-                ),
-                end = "     "
+            # get angle to enemy
+            pos, aZ = my_cur_info["position"], my_cur_info["aZ"]
+            t_pos, t_aZ = opponent_cur_info["position"], opponent_cur_info["aZ"]
+            t_dir = t_pos - pos
+            target_angle = np.arccos(
+                np.dot(t_dir, aZ) / (np.linalg.norm(t_dir) * np.linalg.norm(aZ))
             )
-            """
-        self.prev_observations = observations
+
+            # if angle is small, reward
+            reward += (
+                (1 / (target_angle + 0.1)) - target_angle
+            ) / 10 
+
+            # if opponent health level is decreased, reward
+            reward += (
+                opponent_prev_info["health_level"] - opponent_cur_info["health_level"]
+            ) * 1000
+
+            # if my heatlh level is decreased, punish
+            reward += (
+                my_prev_info["health_level"] - my_cur_info["health_level"]
+            ) * -1000
+
+            # if loose, punish
+            if my_cur_info["health_level"] <= 1e-3 :
+                reward += -100000
+            
+            # if won, reward
+            if opponent_cur_info["health_level"] <= 1e-3 :
+                reward += 100000
+
+            rewards[plane_idx] = reward
+ 
+
+        self.savePrevInfo(observations, info)
         
-        return rewards
+        result = rewards
+        return result
+
 
     def calcDistanceToBoundary(self, observation) :
         """

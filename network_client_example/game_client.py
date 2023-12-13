@@ -11,13 +11,15 @@ class GameClient :
         server_port,
         gladius_radius = 5000,
         enable_autopilot = False,
-        enable_render = True
+        enable_render = True,
+        display_radar_in_renderless_mode = True
     ) :
         self.server_ip = server_ip
         self.server_port = server_port
         self.gladius_radius = gladius_radius
         self.enable_autopilot = enable_autopilot
         self.enable_render = enable_render
+        self.display_radar_in_renderless_mode = display_radar_in_renderless_mode
 
     def connect(self) :
         df.connect(self.server_ip, self.server_port)
@@ -27,6 +29,7 @@ class GameClient :
     def resetGame(self) :
         df.set_client_update_mode(True)
         df.set_renderless_mode(False if self.enable_render else True)
+        df.set_display_radar_in_renderless_mode(self.display_radar_in_renderless_mode)
         self.planes = df.get_planes_list()
         self.user_plane_idx = 0
 
@@ -44,6 +47,8 @@ class GameClient :
 
     def close(self) :
         self.disconnectGame()
+
+
         
     def update(self, control_actions:dict) :
         # put control actions to plane
@@ -53,10 +58,11 @@ class GameClient :
             df.set_plane_yaw(plane_name, control_action["yaw"])
             df.set_plane_thrust(plane_name, control_action["thrust"])
             
-            if control_action["activate_post_combustion"] :
-                df.activate_post_combustion(plane_name)
-            if control_action["deactivate_post_combustion"] :
-                df.deactivate_post_combustion(plane_name)
+            if "activate_autopilot" in control_action :
+                if control_action["activate_post_combustion"] :
+                    df.activate_post_combustion(plane_name)
+                if control_action["deactivate_post_combustion"] :
+                    df.deactivate_post_combustion(plane_name)
             if control_action["fire_machine_gun"] :
                 df.fire_machine_gun(plane_name)
             else :
@@ -95,7 +101,7 @@ class GameClient :
     def checkEpisodEnd(self, observations) :
         for plane, obs in observations.items() :
             if obs["health_level"] == 0 :
-                print("zero health_level")
+                #print("zero health_level")
                 return True
             if obs['destroyed'] or obs['wreck'] or obs['crashed'] :
                 print("destroyed")

@@ -511,8 +511,8 @@ class Missions:
 		
 		if n == 1:
 			cls.aircrafts_starts_in_sky(
-				main.players_allies, hg.Vec3(200, 1000, 0), hg.Vec3(0, 0, 0),
-				hg.Vec2(0, 1), hg.Vec2(300 / 3.6, 300 / 3.6))
+				main.players_allies, hg.Vec3(0, 1000, 0), hg.Vec3(0, 0, 0),
+				hg.Vec2(0, 0), hg.Vec2(300 / 3.6, 300 / 3.6))
 			"""
 			cls.aircrafts_starts_on_carrier(
 				main.players_allies, main.aircraft_carrier_allies[0],
@@ -532,8 +532,8 @@ class Missions:
 		n = len(main.players_ennemies)
 		if n == 1:
 			cls.aircrafts_starts_in_sky(
-				main.players_ennemies, hg.Vec3(0, 1000, 200), hg.Vec3(0, 0, 0),
-				hg.Vec2(178, 180), hg.Vec2(300 / 3.6, 300 / 3.6))
+				main.players_ennemies, hg.Vec3(100, 1000, 100), hg.Vec3(0, 0, 0),
+				hg.Vec2(180, 180), hg.Vec2(300 / 3.6, 300 / 3.6))
 			
 			#cls.aircrafts_starts_on_carrier(main.players_ennemies, main.aircraft_carrier_ennemies[0], hg.Vec3(10, 19.5, 40), 0, hg.Vec3(0, 0, -20))
 		elif n > 1:

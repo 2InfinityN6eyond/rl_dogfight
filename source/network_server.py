@@ -12,7 +12,9 @@ import Physics
 import SmartCamera
 
 main = None
+dogfight_network_port = 50889
 dogfight_network_port = 50888
+dogfight_network_port = 50887
 flag_server_running = False
 flag_server_connected = False
 server_log = ""
@@ -697,12 +699,52 @@ def get_plane_state(args):
 
 	position = machine.get_position()
 	rotation = machine.get_Euler()
+	world_speed = machine.get_world_speed()
 	v_move = machine.get_move_vector()
+	try :
+		raw_pp = machine.get_physics_parameters()
+		physics_parameters = {
+			"v_move": [ 
+				raw_pp["v_move"].x, raw_pp["v_move"].y, raw_pp["v_move"].z],
+			"thrust_level": raw_pp["thrust_level"],
+			"thrust_force": raw_pp["thrust_force"],
+			"angular_level" : [
+				raw_pp["angular_levels"].x, raw_pp["angular_levels"].y, raw_pp["angular_levels"].z
+			]
+		}
+
+		mat, pos, rot, aX, aY, aZ = machine.decompose_matrix()
+		pos = [pos.x, pos.y, pos.z]
+		rot = [rot.x, rot.y, rot.z]
+		aX = [aX.x, aX.y, aX.z]
+		aY = [aY.x, aY.y, aY.z]
+		aZ = [aZ.x, aZ.y, aZ.z]
+		
+	except Exception as e :
+		print("exeption raised :", e)
+		physics_parameters = None
+
+		pos = None
+		rot = None
+		aX = None
+		aY = None
+		aZ = None
+
 	state = {
 		"timestamp": main.timestamp,
 		"timestep": main.timestep,
+		"physics_parameters": physics_parameters,
+        
+		"pos" : pos,
+		"rot" : rot,
+		"aX" : aX,
+		"aY" : aY,
+		"aZ" : aZ,
+
+
 		"position": [position.x, position.y, position.z],
 		"Euler_angles": [rotation.x, rotation.y, rotation.z],
+		"world_speed": world_speed,
 		"easy_steering": machine.flag_easy_steering,
 		"health_level": machine.health_level,
 		"destroyed": machine.flag_destroyed,
